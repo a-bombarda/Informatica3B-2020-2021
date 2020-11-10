@@ -21,6 +21,12 @@ public class NumberSum {
 		a = b = 0;
 	}
 	
+	/**
+	 * Instantiates a new number sum.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 */
 	public NumberSum(int a, int b) {
 		super();
 		this.a = a;
@@ -45,10 +51,20 @@ public class NumberSum {
 		this.b = b;
 	}
 	
+	/**
+	 * Gets the a.
+	 *
+	 * @return the a
+	 */
 	public int getA() {
 		return a;
 	}
 
+	/**
+	 * Gets the b.
+	 *
+	 * @return the b
+	 */
 	public int getB() {
 		return b;
 	}
@@ -63,6 +79,11 @@ public class NumberSum {
 		return a + b;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		NumberSum ns = new NumberSum();
 		
