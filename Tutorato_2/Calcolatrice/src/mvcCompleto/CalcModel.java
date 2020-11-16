@@ -27,7 +27,7 @@ public class CalcModel extends Observable{
 		setChanged();
 		// Notifica gli observer (la view)
 		notifyObservers();
-		System.out.println("[MDOEL] Observers notified (reset)");
+		System.out.println("[MODEL] Observers notified (reset)");
 	}
 
 
@@ -41,7 +41,7 @@ public class CalcModel extends Observable{
 		setChanged();
 		// Notifica gli observer (la view)
 		notifyObservers();
-		System.out.println("[MDOEL] Observers notified (mult)");
+		System.out.println("[MODEL] Observers notified (mult)");
 	}
 
 	// Ritorna il valore della "memoria"

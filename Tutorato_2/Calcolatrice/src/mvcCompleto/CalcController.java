@@ -1,8 +1,4 @@
 package mvcCompleto;
-// stucture/calc-mvc/CalcController.java - Controller
-//    Handles user interaction with listeners.
-//    Calls View and Model as needed.
-// Fred Swartz -- December 2004
 
 import java.awt.event.*;
 
