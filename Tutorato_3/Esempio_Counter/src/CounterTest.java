@@ -9,8 +9,8 @@ public class CounterTest {
 	@Test
 	public void testInc() {
 		Counter c = new Counter();
-//		assertEquals(1, c.inc()); //PASS
-		assertEquals("FALLISCE", 2, c.inc()); //FAIL
+		assertEquals(1, c.inc()); //PASS
+//		assertEquals("FALLISCE", 2, c.inc()); //FAIL
 	}
 
 	@Test

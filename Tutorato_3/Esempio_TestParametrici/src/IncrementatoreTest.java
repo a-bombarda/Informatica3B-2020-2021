@@ -22,7 +22,7 @@ public class IncrementatoreTest {
 
 		@Parameters 
 		public static Collection<Object[]> creaParametri(){ 
-			return Arrays.asList(new Object[][] { {0, 1}, {2, 3}, {5, 6}});
+			return Arrays.asList(new Object[][] { {0, 1}, {2, 3}, {5, 6}, {4, 5}});
 		};  
 
 		@Test 

@@ -32,7 +32,7 @@ public class Calcolatrice {
 		}
 		int appoggio = esponente; 	// Variabile di appoggio
 		
-		while (appoggio-- > 0){    	// Notare il POST-decremento
+		while (--appoggio > 0){    	// Notare il POST-decremento
 			risultato *= base;
 		}
 		
