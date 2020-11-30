@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE corso SYSTEM "corso.dtd">
+<corso codice="MWT014">
+	<nome>Progetto INF III</nome>
+	<descrizione>
+		<obiettivi>bla,bla</obiettivi>
+		<prerequisiti>bla,bla</prerequisiti>
+		<esame>bla,bla</esame>
+	</descrizione>
+	<sillabo>
+		<argomento>x</argomento>
+		<argomento>y</argomento>
+	</sillabo>
+	<docenti>
+		<docente rif="555235235">
+			<nome>Angelo</nome>
+			<cognome>Gargantini</cognome>
+		</docente>
+		<docente rif="6456456456">
+			<nome>Patrizia</nome>
+			<cognome>Scandurra</cognome>
+		</docente>
+	</docenti>
+	<testi>
+		<testo>
+			<autore>A</autore>
+			<autore>B</autore>
+			<titolo>T</titolo>
+			<editore>E</editore>
+		</testo>
+		<testo>
+			<autore>A</autore>
+			<autore>B</autore>
+			<titolo>T</titolo>
+			<editore>E</editore>
+		</testo>
+	</testi>
+	<erogazione>
+		<crediti tipologia="A" numero="6"/>
+		<crediti tipologia="B" numero="3"/>
+		<periodo>1</periodo>
+		<cdl>Ingegneria Informatica Triennale</cdl>
+		<anno>3</anno>
+	</erogazione>
+	<vincoli>
+		<propedeuticita>
+			<rif-corso rif="2235235">Informatica II</rif-corso>
+		</propedeuticita>
+		<mutuazioni>
+			<rif-corso rif="2235234">Informatica III</rif-corso>
+		</mutuazioni>
+	</vincoli>
+	<risorse>
+		<link tipo="homepage">http://...</link>
+		<link tipo="esercizi">http://...</link>
+		<link descrizione="altra pagina">http://...</link>
+		<email descrizione="per domande al docente">x@y.z</email>
+	</risorse>
+</corso>
