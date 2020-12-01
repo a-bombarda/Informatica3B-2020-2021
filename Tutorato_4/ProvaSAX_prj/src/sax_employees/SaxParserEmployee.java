@@ -103,7 +103,6 @@ public class SaxParserEmployee extends DefaultHandler {
 		if (qName.equalsIgnoreCase("Employee")) {
 			// Aggiungiamo l'oggetto impiegato appena incontrato alla lista myEmpls
 			myEmpls.add(tempEmp);
-
 		} else if (qName.equalsIgnoreCase("Name")) {
 			tempEmp.setName(tempVal);
 		} else if (qName.equalsIgnoreCase("Id")) {

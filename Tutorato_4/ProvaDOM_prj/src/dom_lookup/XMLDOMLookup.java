@@ -99,15 +99,15 @@ public class XMLDOMLookup {
 	}
 
 	public static void main(String[] args) {
-		if (args.length < 1) {
+		/*if (args.length < 1) {
 			System.out.println("Sintassi: XMLDOMLookup nomefile.xml");
 			System.exit(1);
-		}
+		}*/
 		// Crea un'istanza della classe XMLDOMLookup (questa)
 		XMLDOMLookup instance = new XMLDOMLookup();
 
 		// Carica in memoria il documento indicato dal primo argomento
-		Document d = instance.loadDocument(args[0]);
+		Document d = instance.loadDocument("corso_1.xml");
 
 		if (d != null) { // se il caricamento � andato a buon fine
 			// Cerchiamo la lista di docenti attraverso l'apposito metodo
