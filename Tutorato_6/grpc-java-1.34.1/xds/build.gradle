@@ -1,0 +1,152 @@
+plugins {
+    id "java"
+    id "maven-publish"
+
+    id "com.github.johnrengelman.shadow"
+    id "com.google.protobuf"
+    id "ru.vyarus.animalsniffer"
+}
+
+description = "gRPC: XDS plugin"
+
+[compileJava].each() {
+    it.options.compilerArgs += [
+        // valueOf(int) in RoutingPriority has been deprecated
+        "-Xlint:-deprecation",
+    ]
+}
+
+evaluationDependsOn(project(':grpc-core').path)
+
+dependencies {
+    implementation project(':grpc-protobuf'),
+            project(':grpc-stub'),
+            project(':grpc-core'),
+            project(':grpc-services'),
+            project(':grpc-auth'),
+            project(path: ':grpc-alts', configuration: 'shadow'),
+            libraries.gson,
+            libraries.re2j,
+            libraries.bouncycastle
+    def nettyDependency = implementation project(':grpc-netty')
+
+    implementation (libraries.opencensus_proto) {
+        // prefer our own versions instead of opencensus_proto's
+        exclude group: 'com.google.protobuf', module: 'protobuf-java'
+        exclude group: 'io.grpc', module: 'grpc-protobuf'
+        exclude group: 'io.grpc', module: 'grpc-stub'
+    }
+    implementation (libraries.protobuf_util) {
+        // prefer our own versions instead of protobuf-util's dependency
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+    }
+
+    testImplementation project(':grpc-core').sourceSets.test.output
+
+    compileOnly libraries.javax_annotation,
+            // At runtime use the epoll included in grpc-netty-shaded
+            libraries.netty_epoll
+
+    testImplementation project(':grpc-testing'),
+            project(':grpc-testing-proto'),
+            libraries.netty_epoll
+    testImplementation (libraries.guava_testlib) {
+        exclude group: 'junit', module: 'junit'
+    }
+
+    shadow configurations.implementation.getDependencies().minus([nettyDependency])
+    shadow project(path: ':grpc-netty-shaded', configuration: 'shadow')
+
+    signature "org.codehaus.mojo.signature:java17:1.0@signature"
+    testRuntimeOnly libraries.netty_tcnative
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir 'third_party/envoy/src/main/proto'
+            srcDir 'third_party/protoc-gen-validate/src/main/proto'
+            srcDir 'third_party/udpa/src/main/proto'
+            srcDir 'third_party/googleapis/src/main/proto'
+            srcDir 'third_party/istio/src/main/proto'
+        }
+    }
+}
+
+configureProtoCompilation()
+
+jar {
+    classifier = 'original'
+}
+
+javadoc {
+    // Exclusions here should generally also be relocated
+    exclude 'com/github/udpa/**'
+    exclude 'com/google/security/**'
+    exclude 'io/envoyproxy/**'
+    // Need to clean up the class structure to reduce how much is exposed
+    exclude 'io/grpc/xds/*LoadBalancer*'
+    exclude 'io/grpc/xds/Bootstrapper.java'
+    exclude 'io/grpc/xds/Envoy*'
+    exclude 'io/grpc/xds/XdsAttributes.java'
+    exclude 'io/grpc/xds/XdsClientWrapperForServerSds.java'
+    exclude 'io/grpc/xds/XdsInitializationException.java'
+    exclude 'io/grpc/xds/XdsNameResolverProvider.java'
+    exclude 'io/grpc/xds/internal/**'
+}
+
+shadowJar {
+    classifier = null
+    dependencies {
+        include(project(':grpc-xds'))
+    }
+    // Relocated packages commonly need exclusions in jacocoTestReport and javadoc
+    relocate 'com.github.udpa', 'io.grpc.xds.shaded.com.github.udpa'
+    relocate 'com.google.api.expr', 'io.grpc.xds.shaded.com.google.api.expr'
+    relocate 'com.google.security', 'io.grpc.xds.shaded.com.google.security'
+    // TODO: missing java_package option in .proto
+    relocate 'envoy.annotations', 'io.grpc.xds.shaded.envoy.annotations'
+    relocate 'io.envoyproxy', 'io.grpc.xds.shaded.io.envoyproxy'
+    relocate 'io.grpc.netty', 'io.grpc.netty.shaded.io.grpc.netty'
+    relocate 'io.netty', 'io.grpc.netty.shaded.io.netty'
+    // TODO: missing java_package option in .proto
+    relocate 'udpa.annotations', 'io.grpc.xds.shaded.udpa.annotations'
+    exclude "**/*.proto"
+}
+
+jacocoTestReport {
+    classDirectories.from = sourceSets.main.output.collect {
+        fileTree(dir: it,
+        exclude: [ // Exclusions here should generally also be relocated
+                '**/com/github/udpa/**',
+                '**/com/google/api/expr/**',
+                '**/com/google/security/**',
+                '**/envoy/annotations/**',
+                '**/io/envoyproxy/**',
+                '**/udpa/annotations/**',
+        ])
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact shadowJar
+            artifacts.removeAll { it.classifier == 'original' }
+
+            pom.withXml {
+                def dependenciesNode = new Node(null, 'dependencies')
+                project.configurations.shadow.allDependencies.each { dep ->
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', dep.group)
+                    dependencyNode.appendNode('artifactId', dep.name)
+                    def version = (dep.name == 'grpc-netty-shaded') ? '[' + dep.version + ']' : dep.version
+                    dependencyNode.appendNode('version', version)
+                    dependencyNode.appendNode('scope', 'compile')
+                }
+                asNode().dependencies[0].replaceNode(dependenciesNode)
+            }
+        }
+    }
+}
